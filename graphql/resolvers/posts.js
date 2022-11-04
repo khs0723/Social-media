@@ -1,7 +1,10 @@
 const { AuthenticationError, UserInputError } = require("apollo-server");
+const { PubSub } = require("graphql-subscriptions");
 
 const Post = require("../../models/Post");
 const checkAuth = require("../../util/check-auth");
+
+const pubsub = new PubSub();
 
 module.exports = {
   Query: {
@@ -38,7 +41,9 @@ module.exports = {
       });
 
       const post = await newPost.save();
-      context.pubsub.publish("NEW_POST", { newPost: post });
+      pubsub.publish("NEW_POST", {
+        newPost: post,
+      });
       return post;
     },
 
@@ -82,7 +87,7 @@ module.exports = {
   },
   Subscription: {
     newPost: {
-      subscribe: (_, __, { pubsub }) => pubsub.asyncIterator("NEW_POST"),
+      subscribe: () => pubsub.asyncIterator("NEW_POST"),
     },
   },
 };
