@@ -44,9 +44,9 @@ const resolvers = require("./graphql/resolvers/index");
 
   await server.start();
   server.applyMiddleware({ app });
-
+  const Port = "8080";
   mongoose.connect(MONGODB, { useNewUrlParser: true });
-  httpServer.listen(8080, () => {
-    console.log("server running");
+  httpServer.listen(Port, () => {
+    console.log("server running " + Port);
   });
 })();

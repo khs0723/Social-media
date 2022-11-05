@@ -51,23 +51,25 @@ module.exports = {
 
     async register(
       parent,
-      { registerInput: { userName, email, password, confirmPassword } },
-      context,
-      info
+      args
+      //{ registerInput: { userName, email, password, confirmPassword } }
     ) {
       // TODO : validate user data
       // TODO : Make sure user doesnt already exist
       // TODO : hash password and create auth token
+      console.log(args.registerInput);
       const { valid, errors } = validateRegisterInput(
-        userName,
-        email,
-        password,
-        confirmPassword
+        args.registerInput.userName,
+        args.registerInput.email,
+        args.registerInput.password,
+        args.registerInput.confirmPassword
       );
       if (!valid) {
         throw new UserInputError("Errors", { errors });
       }
-      const user = await User.findOne({ userName });
+      const user = await User.findOne({
+        userName: args.registerInput.userName,
+      });
       if (user) {
         throw new UserInputError("Username is taken", {
           errors: {
@@ -76,11 +78,11 @@ module.exports = {
         });
       }
 
-      password = await bcrypt.hash(password, 12);
+      const hashedPassword = await bcrypt.hash(args.registerInput.password, 12);
       const newUser = new User({
-        email,
-        userName,
-        password,
+        userName: args.registerInput.userName,
+        email: args.registerInput.email,
+        password: hashedPassword,
         createdAt: new Date().toISOString(),
       });
       const res = await newUser.save();
