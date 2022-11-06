@@ -1,37 +1,43 @@
 import { useMutation } from "@apollo/react-hooks";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Form, Button } from "semantic-ui-react";
 import { LOGIN_USER } from "../graphql/mutation/users";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/auth";
 
 export default function Login(props) {
+  const navigate = useNavigate();
+
+  const context = useContext(AuthContext);
   const [errors, setErrors] = useState({});
   const [values, setValues] = useState({
     userName: "",
-    email: "",
     password: "",
-    confirmPassword: "",
   });
   const onChange = (e) => {
     console.log(values.userName);
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
-  const [addUser, { loading }] = useMutation(LOGIN_USER, {
-    update(proxy, result) {
-      console.log(result);
-
-      props.history.push("/");
+  const [loginUser, { loading }] = useMutation(LOGIN_USER, {
+    update(proxy, { data: { login: userData } }) {
+      console.log(userData);
+      context.login(userData);
+      navigate("/");
     },
     onError(err) {
-      console.log(err.graphQLErrors[0].extensions);
-      setErrors(err.graphQLErrors[0].extensions.errors);
+      setErrors(
+        err && err.graphQLErrors[0]
+          ? err.graphQLErrors[0].extensions.errors
+          : {}
+      );
     },
     variables: values,
   });
 
   const onSubmit = (e) => {
     e.preventDefault();
-    addUser();
+    loginUser();
   };
 
   return (
@@ -46,14 +52,6 @@ export default function Login(props) {
           error={errors.userName ? true : false}
           onChange={onChange}
         />
-        <Form.Input
-          label="Email"
-          name="email"
-          type="email"
-          value={values.email}
-          error={errors.email ? true : false}
-          onChange={onChange}
-        />
 
         <Form.Input
           label="Password"
@@ -63,16 +61,8 @@ export default function Login(props) {
           error={errors.password ? true : false}
           onChange={onChange}
         />
-        <Form.Input
-          label="Confirm Password"
-          name="confirmPassword"
-          type="password"
-          value={values.confirmPassword}
-          error={errors.confirmPassword ? true : false}
-          onChange={onChange}
-        />
 
-        <Button type="submit">Register</Button>
+        <Button type="submit">Login</Button>
       </Form>
       {Object.keys(errors).length > 0 && (
         <div className="ui error message">

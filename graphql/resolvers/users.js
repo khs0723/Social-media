@@ -29,8 +29,9 @@ module.exports = {
       if (!valid) {
         throw new UserInputError("Errors", { errors });
       }
-
-      const user = await User.findOne({ userName });
+      console.log(userName);
+      const user = await User.findOne({ userName: userName });
+      console.log(user);
       if (!user) {
         errors.general = "User not found";
         throw new UserInputError("User not found", { errors });

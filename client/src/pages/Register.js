@@ -1,11 +1,13 @@
 import { useMutation } from "@apollo/react-hooks";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Form, Button } from "semantic-ui-react";
 import { REGISTER_USER } from "../graphql/mutation/users";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/auth";
 
 export default function Register(props) {
   const navigate = useNavigate();
+  const context = useContext(AuthContext);
 
   const [errors, setErrors] = useState({});
   const [values, setValues] = useState({
@@ -19,14 +21,12 @@ export default function Register(props) {
   };
 
   const [addUser, { loading }] = useMutation(REGISTER_USER, {
-    update(proxy, result) {
-      console.log(result);
-      console.log(props.history);
-      //props.history.push("/");
+    update(proxy, { data: { register: userData } }) {
+      context.login(userData);
+
       navigate("/");
     },
     onError(err) {
-      console.log(err.graphQLErrors[0]);
       setErrors(
         err && err.graphQLErrors[0]
           ? err.graphQLErrors[0].extensions.errors
