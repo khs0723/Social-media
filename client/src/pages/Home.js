@@ -12,7 +12,7 @@ export default function Home() {
   if (loading) return <p>Loding...</p>;
   if (error) return <p>Error</p>;
   console.log(data);
-  return (
+  return ( 
     <>
       <Grid columns={1}>
         <Grid.Row>

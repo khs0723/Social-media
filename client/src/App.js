@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./App.css";
 import "semantic-ui-css/semantic.min.css";
@@ -12,7 +12,7 @@ import Navbar from "./components/Navbar";
 
 function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <Container>
         <Navbar />
 
@@ -22,7 +22,7 @@ function App() {
           <Route exact path="/register" element={<Register />}></Route>
         </Routes>
       </Container>
-    </Router>
+    </BrowserRouter>
   );
 }
 

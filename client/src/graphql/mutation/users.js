@@ -23,5 +23,29 @@ const REGISTER_USER = gql`
     }
   }
 `;
+// const REGISTER_USER = gql`
+//   mutation register {
+//     register(
+//       registerInput: {
+//         userName: $userName
+//         email: $email
+//         password: $password
+//         confirmPassword: $confirmPassword
+//       }
+//     )
+//   }
+// `;
 
-export { REGISTER_USER };
+const LOGIN_USER = gql`
+  mutation login($userName: String!, $password: String!) {
+    login(userName: $userName, password: $password) {
+      id
+      email
+      userName
+      createdAt
+      token
+    }
+  }
+`;
+
+export { REGISTER_USER, LOGIN_USER };
